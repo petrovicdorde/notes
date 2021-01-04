@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Form, InputGroup, Table } from "react-bootstrap";
 
 const Search = () => {
   const [data, setData] = useState([]);
@@ -17,16 +18,26 @@ const Search = () => {
     const value = e.target.value;
 
     const filteredData = JSON.parse(localStorage.data).filter((item) =>
-      item.problem.includes(value)
+      item.problem.toLowerCase().includes(value.toLowerCase())
     );
     setData(filteredData);
   };
 
   return (
     <div className="search">
-      <p>Search Problem</p>
-      <input type="text" onChange={handleSearchChange} />
-      <table>
+      <Form onChange={handleSearchChange}>
+        <Form.Group>
+          <Form.Label>Search Problem</Form.Label>
+          <Form.Control placeholder="Search"></Form.Control>
+        </Form.Group>
+      </Form>
+      <Table striped bordered hover size="lg" variant="dark">
+        <thead>
+          <tr>
+            <th>Problem</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
         <tbody>
           {data.map((item) => {
             return (
@@ -37,7 +48,7 @@ const Search = () => {
             );
           })}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

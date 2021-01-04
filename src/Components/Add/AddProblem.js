@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import "./Add.sass";
 
 function AddProblem() {
   const [problems, setProblems] = useState([]);
   const [pas, setPas] = useState({ problem: "", solution: "" });
+  const [errors, setErrors] = useState({
+    problem: [],
+    solution: [],
+  });
 
   useEffect(() => {
     let data = [];
@@ -22,24 +27,55 @@ function AddProblem() {
   };
 
   const addSolution = () => {
+    setErrors({
+      problem: pas.problem === "" ? ["Obavezno polje"] : [],
+      solution: pas.solution === "" ? ["Obavezno polje"] : [],
+    });
+
+    if (pas.problem === "" || pas.solution === "") return;
+
     addIntoProblems(pas);
-    setPas({problem: "", solution: ""});
-  }
+    setPas({ problem: "", solution: "" });
+  };
 
   return (
-    <div className="add">
-      <p>Problem name:</p>
-      <input type="text" name="problem" value={pas.problem} onChange={(event) => {setPas({...pas,problem:event.target.value})}}/>
-      <p>Solution:</p>
-      <input type="text" name="solution" value={pas.solution} onChange={(event) => {setPas({...pas,solution:event.target.value})}} />
-      <button
+    <Form
+      onChange={(event) => {
+        setPas({ ...pas, [event.target.id]: event.target.value });
+      }}
+      className="add"
+    >
+      <Form.Group controlId="problem">
+        <Form.Label>Problem</Form.Label>
+        <Form.Control placeholder="Unesite Problem" value={pas.problem} />
+        <Form.Text className={`${errors.problem.length ? "invalid" : "valid"}`}>
+          {errors.problem.map((error) => (
+            <div>{error}</div>
+          ))}
+        </Form.Text>
+      </Form.Group>
+
+      <Form.Group controlId="solution">
+        <Form.Label>Solution</Form.Label>
+        <Form.Control placeholder="Solution" value={pas.solution} />
+        <Form.Text
+          className={`${errors.solution.length ? "invalid" : "valid"}`}
+        >
+          {errors.solution.map((error) => (
+            <div>{error}</div>
+          ))}
+        </Form.Text>
+      </Form.Group>
+      <Button
+        variant="primary"
+        type="button"
         onClick={() => {
           addSolution();
         }}
       >
         Add
-      </button>
-    </div>
+      </Button>
+    </Form>
   );
 }
 
